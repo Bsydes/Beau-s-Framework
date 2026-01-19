@@ -1,3 +1,14 @@
+# Beau's Framework
+
+**Built with:**
+- [GSD (Get Shit Done)](https://github.com/glittercowboy/get-shit-done) by Lex Christopherson / TÂCHES (MIT License)
+- Superpowers Marketplace by Jesse Vincent (MIT License)
+- Planning with Files by Ahmad Adi (MIT License)
+
+See [ATTRIBUTION.md](ATTRIBUTION.md) for complete third-party notices.
+
+---
+
 # Claude Code Configuration
 
 ## MANDATORY AUTO-ORCHESTRATION PROTOCOL
