@@ -9,6 +9,51 @@ See [ATTRIBUTION.md](ATTRIBUTION.md) for complete third-party notices.
 
 ---
 
+## Project Organization Protocol
+
+### MANDATORY: All Projects Go in ~/Projects/
+
+**This applies to EVERY Claude Code session, including those without historical context.**
+
+#### Rule
+
+- ✅ **CREATE** new projects in `~/Projects/[project-name]/`
+- ✅ **ORGANIZE** existing projects into `~/Projects/`
+- ✅ **ADD** README.md to every project folder
+- ❌ **DO NOT** create projects in home directory
+- ❌ **DO NOT** scatter projects across multiple locations
+
+#### Current Projects Structure
+
+```text
+~/Projects/
+├── Beau-s-Framework/        (GitHub public - framework core)
+├── n8n-workflows/           (GitHub private - automation)
+├── flight-plan-workshop/    (Local - workshop materials)
+├── weekly-slide-deck/       (Local - content templates)
+├── REPS/                    (Local - Real Estate Professional Status / taxes)
+├── Crypto/                  (Local - wallet management)
+└── business-plan/           (Local - property analysis)
+```
+
+#### When Creating New Projects
+
+1. Ask user: "Should this go in ~/Projects/?"
+2. If yes: `mkdir ~/Projects/[project-name]`
+3. Create: `~/Projects/[project-name]/README.md`
+4. Document project purpose in README
+5. Initialize git if it's code/workflows
+
+#### For Future Sessions
+
+Even if you don't have full context, if you're creating a new project:
+
+- **ALWAYS** use `~/Projects/[project-name]/` as the location
+- **ALWAYS** create a README.md with project description
+- **ALWAYS** check if it should go to GitHub
+
+---
+
 # Claude Code Configuration
 
 ## MANDATORY AUTO-ORCHESTRATION PROTOCOL
