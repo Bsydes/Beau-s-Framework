@@ -470,6 +470,142 @@ I MUST follow this enhanced protocol:
 
 ---
 
+## 📋 PART 8: REDUNDANCY RESOLUTION
+
+### 8.1 Ephor vs Task-Master Plugin (REDUNDANCY-001)
+
+**Problem:** Both claim to decompose tasks and track progress, causing confusion.
+
+**RESOLUTION - Clear Role Separation:**
+
+| Feature | Ephor | Task-Master Plugin |
+|---------|-------|-------------------|
+| **Scope** | Single-session runtime orchestration | Persistent cross-session project management |
+| **Lifecycle** | Temporary (ends when task completes) | Permanent (survives context resets) |
+| **Use Case** | "Break down THIS complex request into sub-tasks and execute NOW" | "Track ongoing project with phases/milestones over days/weeks" |
+| **Storage** | In-memory (context only) | File-based (.claude/tasks.md) |
+| **Triggers** | Complexity keywords detected in user request | Explicit `/task` commands or long-term projects |
+| **Output** | Immediate execution with synthesis | Progress tracking, task lists, dependency graphs |
+
+**Decision Rule:**
+- User says "orchestrate", "coordinate", "multi-step" in a SINGLE REQUEST → **Ephor**
+- User needs TODO lists, project tracking, or resumes work across sessions → **Task-Master**
+- If unsure: "Is this one big request to complete now?" → Ephor. "Is this a multi-day project?" → Task-Master.
+
+**Example Disambiguation:**
+```
+"Orchestrate deployment across 5 services" → Ephor (single complex request)
+"Track my auth system implementation over the next week" → Task-Master (long-term tracking)
+"Break down OAuth2 implementation and execute it" → Ephor (decompose + execute now)
+"Create a roadmap for refactoring the codebase" → Task-Master (persistent planning)
+```
+
+---
+
+### 8.2 THINKER Pattern vs Ephor Analysis (REDUNDANCY-002)
+
+**Problem:** Both do architectural analysis, unclear when to use which.
+
+**RESOLUTION - Scope-Based Selection:**
+
+| Characteristic | THINKER Pattern | Ephor Analysis |
+|----------------|-----------------|----------------|
+| **Decision Count** | Single decision or 2-3 related options | Multi-faceted problem with dependencies |
+| **Constraint Complexity** | Simple constraint set (2-5 factors) | Complex constraint web (6+ factors, trade-offs) |
+| **Output** | One recommendation with rationale | Comprehensive plan with execution steps |
+| **Token Cost** | Low (<2000 tokens) | High (>5000 tokens) |
+| **Example** | "Should we use Redis or Memcached?" | "Design entire caching strategy across microservices" |
+
+**Decision Rule:**
+- **Single decision point** (even if nuanced) → THINKER
+- **Multiple interconnected decisions** → Ephor
+- **Binary/tertiary choice** → THINKER
+- **Architectural planning** spanning multiple components → Ephor
+
+**Visual Decision Tree:**
+```
+Need to make a decision?
+    │
+    ▼
+Is it ONE question with 2-3 options?
+    │
+YES ─┴─ NO (multiple questions/complex dependencies)
+ │       │
+ ▼       ▼
+THINKER  Ephor
+```
+
+**Examples:**
+```
+"Which state management library?" → THINKER (single choice, clear options)
+"Design state management architecture for our app" → Ephor (many decisions: library, patterns, data flow, persistence, sync)
+
+"Should we use REST or GraphQL?" → THINKER (binary choice)
+"Design our entire API strategy" → Ephor (REST vs GraphQL + auth + versioning + rate limiting + docs)
+
+"Evaluate these 3 database options" → THINKER (tertiary choice)
+"Plan our data layer migration strategy" → Ephor (DB choice + migration plan + rollback + testing + monitoring)
+```
+
+---
+
+### 8.3 Memory Auto-Save Deduplication (REDUNDANCY-003)
+
+**Problem:** Auto-save and manual saves could duplicate entries.
+
+**RESOLUTION - Deduplication Logic:**
+
+**Implemented Strategy:**
+1. **Timestamp Check:** Before any save, check last save in category
+2. **Time Window:** If last save was <5 minutes ago, compare content
+3. **Content Similarity:** Compute simple hash or first 100 chars comparison
+4. **Skip Rule:** If >80% similar AND <5 min ago, skip save (log: "Skipped duplicate save")
+5. **Force Save:** Manual saves with `force=true` flag bypass dedup
+
+**Deduplication Algorithm:**
+```python
+def should_save(category, title, content):
+    last_save = get_last_save(category)
+
+    if not last_save:
+        return True  # No previous save, always save
+
+    time_diff = now() - last_save.timestamp
+
+    if time_diff > 300:  # >5 minutes
+        return True  # Enough time passed, save
+
+    # Within 5-min window, check similarity
+    similarity = compute_similarity(content, last_save.content)
+
+    if similarity < 0.8:  # <80% similar
+        return True  # Different enough, save
+
+    # Too similar, too recent - skip
+    log_debug(f"Skipped duplicate save: {title} (similarity: {similarity:.0%})")
+    return False
+```
+
+**Auto-Save Triggers (After Dedup Check):**
+- Task completion (phase done, bug fixed, feature implemented)
+- Significant discovery (root cause found, pattern identified)
+- Configuration change affecting behavior
+- Architectural decision made
+
+**Manual Save Override:**
+```bash
+# Force save even if similar to recent save
+python3 ~/.claude_memory/historian.py 'category' 'Title' 'Content' --force
+```
+
+**Benefits:**
+- Prevents spam from repeated similar discoveries
+- Allows explicit saves when needed
+- Maintains clean memory without duplicates
+- Logs skipped saves for debugging
+
+---
+
 ## 📖 PART 9: GLOSSARY - PRECISE DEFINITIONS
 
 ### Framework Term Definitions
