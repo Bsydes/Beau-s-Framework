@@ -1,0 +1,3 @@
+# Ephor API for n8n Integration
+
+Ephor provides free LLM access via API. Endpoint: https://api.ephor.ai/api/v1/multiplexer/query-project. Auth: Authorization header with API key. Body: {"project_id": "...", "query": "...", "model": "claude-opus-4-5"}. Available models: claude-opus-4-5 (best), claude-haiku-4-5 (fast), gpt-5, o3, o3-pro, deepseek-r1. Use in n8n HTTP Request nodes for free agent LLM calls.

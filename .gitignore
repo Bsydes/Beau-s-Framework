@@ -1,0 +1,75 @@
+# Framework Git Repository - Only Track Framework Files
+
+# Track these framework files:
+# CLAUDE.md
+# .claude_memory/
+# docs/plans/
+# beaus_framework_test_report.md
+
+# Exclude everything else by default
+/*
+
+# Then explicitly include framework files
+!.gitignore
+!CLAUDE.md
+!beaus_framework_test_report.md
+!.claude_memory/
+!docs/
+
+# Exclude system and IDE files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Exclude all directories except those we explicitly include
+Desktop/
+Documents/
+Downloads/
+Library/
+Applications/
+Projects/
+Pictures/
+Music/
+Movies/
+Public/
+.Trash/
+.ssh/
+.config/
+.local/
+.cache/
+.npm/
+.nvm/
+.docker/
+.cursor/
+.claude/plugins/
+.claude/projects/
+.claude/file-history/
+.claude/shell-snapshots/
+
+# Include specific .claude subdirectories if needed
+# (Add here if you want to track specific .claude configs)
+
+# Exclude node_modules and dependencies
+node_modules/
+vendor/
+venv/
+env/
+
+# Exclude build artifacts
+dist/
+build/
+target/
+*.pyc
+__pycache__/
+
+# Exclude logs
+*.log
+logs/
+
+# Exclude temporary files
+tmp/
+temp/
+*.tmp

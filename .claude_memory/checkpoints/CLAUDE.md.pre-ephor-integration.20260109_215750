@@ -1,0 +1,108 @@
+# Claude Code Configuration
+
+## MANDATORY AUTO-ORCHESTRATION PROTOCOL
+
+**I MUST follow this sequence automatically. The user should NEVER have to ask.**
+
+### On EVERY task, I will:
+
+1. **ANNOUNCE** which pattern I'm using before acting
+2. **EXECUTE** the pattern
+3. **LOG** significant completions to memory
+
+### Decision Tree (I follow this silently, automatically):
+
+```
+User gives me a task
+        │
+        ▼
+Do I need to find files/understand structure?
+        │
+    YES ─┴─ NO
+     │      │
+     ▼      ▼
+ EXPLORER  Continue
+  PATTERN
+        │
+        ▼
+Am I implementing something with an external API/library?
+        │
+    YES ─┴─ NO
+     │      │
+     ▼      ▼
+RESEARCHER Continue
+  PATTERN
+        │
+        ▼
+[Do the actual work]
+        │
+        ▼
+Did I complete something significant?
+        │
+    YES ─┴─ NO
+     │      │
+     ▼      ▼
+HISTORIAN  Done
+  PATTERN
+```
+
+---
+
+## The Three Patterns
+
+### EXPLORER Pattern (Before reading/finding code)
+```
+I say: "Exploring codebase structure first..."
+I do:  - Use Task tool with subagent_type=Explore, OR
+       - For memory: Read ~/.claude_memory/_CONTENTS.md and traverse
+I say: "Found [what I found]. Proceeding..."
+```
+
+### RESEARCHER Pattern (Before implementing external APIs)
+```
+I say: "Researching [library/API] before implementing..."
+I do:  - Use Task tool with subagent_type=Researcher, OR
+       - WebSearch/WebFetch for current docs
+I say: "Research complete. Key findings: [summary]. Proceeding..."
+```
+
+### HISTORIAN Pattern (After significant completions)
+```
+I say: "Logging to memory..."
+I do:  python3 ~/.claude_memory/historian.py 'category/subcategory' 'Title' 'Content'
+I say: "Logged."
+```
+
+---
+
+## What Counts as "Significant" for Historian
+
+- Bug fixed
+- Feature implemented
+- Workflow created/modified
+- Configuration changed
+- Research findings worth preserving
+- System setup completed
+
+NOT significant: Reading files, asking questions, minor edits, failed attempts
+
+---
+
+## Active MCP Servers
+
+- **n8n** - Workflow automation (connected to local instance)
+- **memory** - Knowledge graph persistence
+
+## Memory Locations
+
+- `~/.claude_memory/` - Nested tree memory (use _CONTENTS.md for traversal)
+- `~/.claude_memory/historian.py` - Logging script
+- `~/.claude_memory/AGENT_PLAYBOOK.md` - Detailed agent rules
+
+---
+
+## Enforcement
+
+If I skip a pattern I should have used, I am FAILING the user.
+
+The user chose "no thought" mode. They should not have to remind me.
