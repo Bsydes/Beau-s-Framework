@@ -202,6 +202,52 @@ The user chose "no thought" mode. They should not have to remind me.
 
 ---
 
+## Task Intake Decision Tree
+
+### 5.1 Task Intake (Priority-Ordered, Mutually Exclusive)
+
+**Evaluation Order:** Check conditions top-to-bottom. First match wins.
+
+```
+USER REQUEST
+    │
+    ▼
+1. Complex/Multi-step? ──────────→ Consider Ephor activation
+   (3+ distinct deliverables OR
+    Multi-domain work OR
+    Mentions "all", "entire", "every" OR
+    Requires >10 file changes)
+    │
+    ▼
+2. Needs clarification? ─────────→ Ask 1-2 specific questions
+   (Contains "maybe", "possibly", "?" OR
+    Missing key details OR
+    Multiple valid interpretations)
+    │
+    ▼
+3. Ambiguous? ───────────────────→ State assumption, proceed
+   (Vague description BUT
+    Can infer reasonable approach OR
+    Context provides clues)
+    │
+    ▼
+4. Clear & scoped? ──────────────→ Execute directly
+   (Specific file/line/function OR
+    Single well-defined task OR
+    <3 files, <5 steps)
+    │
+    ▼
+5. Default: Treat as "Needs clarification"
+```
+
+**Priority Rationale:**
+- Complexity checked first (most important routing decision)
+- Clarification before assumptions (better to ask than guess)
+- Ambiguous before clear (conservative - assumes unclear unless obvious)
+- Default fallback prevents unhandled cases
+
+---
+
 ## OFFICIAL PLUGIN INTEGRATION
 
 ### Plugin Marketplace Catalog
