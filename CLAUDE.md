@@ -467,3 +467,181 @@ I MUST follow this enhanced protocol:
 **Non-Programmer Mode**: Always explain recommendations in plain English, show expected outcomes, and handle installations automatically.
 
 **Token Conservation Rule**: "If I'm about to write >2 paragraphs of explanation/analysis/research, I MUST check if ephor should handle it instead."
+
+---
+
+## 📖 PART 9: GLOSSARY - PRECISE DEFINITIONS
+
+### Framework Term Definitions
+
+To eliminate ambiguity, all vague terms are precisely defined:
+
+#### "Significant" (for HISTORIAN logging)
+
+**Definition:** Worth referencing in future sessions
+
+**Criteria (any ONE triggers significance):**
+- Fixed a bug (any severity)
+- Implemented a feature (any size)
+- Made an architectural decision
+- Discovered a non-obvious pattern/solution
+- Changed configuration affecting behavior
+- Completed a milestone or phase
+- Found root cause of complex issue
+
+**NOT significant:**
+- Read files (information gathering)
+- Asked questions (exploration)
+- Made minor formatting changes
+- Failed attempts (unless revealing insight)
+- Routine file operations
+
+**Edge Cases:**
+- "Tried 3 approaches, 4th worked" → Significant (documents solution path)
+- "Refactored for readability" → Significant only if changes architecture
+- "Added comments" → Not significant (unless documenting complex logic)
+
+---
+
+#### "Minimal" (for RESEARCHER pattern testing)
+
+**Definition:** Smallest change that tests hypothesis
+
+**Criteria:**
+- ≤10 lines of code changed
+- Single function/method modified
+- No API contract changes
+- Reversible in 1 command (e.g., `git checkout file`)
+- No new dependencies added
+- No database schema changes
+
+**Examples:**
+- Minimal: Add print statement to trace value
+- Minimal: Comment out one condition
+- Minimal: Change constant to test behavior
+- NOT minimal: Refactor entire module
+- NOT minimal: Add new library
+
+---
+
+#### "Routine Task" (for pattern selection)
+
+**Definition:** Task not requiring specialized thinking patterns
+
+**Criteria (ALL must be true):**
+- ≤3 distinct steps
+- ≤5 files involved
+- No unknowns (you know exactly what to do)
+- Estimated ≤1000 tokens output
+- No external research needed
+- No architectural decisions
+
+**Examples:**
+- Routine: Fix typo in single file
+- Routine: Add console.log for debugging
+- Routine: Update version number in package.json
+- NOT routine: "Fix the authentication bug" (requires investigation)
+- NOT routine: "Add new feature X" (requires design)
+
+---
+
+#### "Complex Task" (for Ephor activation)
+
+**Definition:** Task requiring orchestration or multi-faceted approach
+
+**Criteria (any TWO triggers complexity):**
+- ≥3 distinct deliverables
+- Multiple domains (e.g., frontend + backend + database)
+- Requires coordinating changes across >5 files
+- Mentions "all", "entire", "every", "complete"
+- Needs both research AND implementation
+- Has dependencies between subtasks
+- Estimated >5000 tokens output
+
+**Examples:**
+- Complex: "Implement OAuth2 authentication with refresh tokens"
+- Complex: "Refactor entire payment module for new API"
+- Complex: "Build complete user management system"
+- NOT complex: "Add a logout button" (single feature)
+- NOT complex: "Fix bug in login.py:42" (specific, isolated)
+
+---
+
+#### "Tightly Coupled" (for Ephor delegation decisions)
+
+**Definition:** Tasks sharing mutable state or requiring sequential data flow
+
+**Criteria (any ONE indicates coupling):**
+- Task B depends on Task A's output value
+- Both tasks modify same data structure
+- Order matters (A must complete before B starts)
+- Shared global state between tasks
+- Context switching loses critical information
+
+**Examples:**
+- Coupled: "Parse config, then validate schema" (validation needs parsed data)
+- Coupled: "Create user, then assign permissions" (permissions need user ID)
+- NOT coupled: "Fix bug in auth" + "Fix bug in payment" (independent)
+- NOT coupled: "Update README" + "Update CHANGELOG" (can be parallel)
+
+---
+
+#### "Self-Contained" (for Ephor sub-task creation)
+
+**Definition:** Task with clear boundaries and no shared state
+
+**Criteria (ALL must be true):**
+- Clear input requirements (data/files needed)
+- Defined output specification (what it produces)
+- No dependencies on other sub-tasks
+- Can be executed in any order (if multiple)
+- No shared mutable state with other tasks
+
+**Examples:**
+- Self-contained: "Write unit tests for auth.py" (input: auth.py, output: tests)
+- Self-contained: "Update documentation for API endpoint X"
+- NOT self-contained: "Implement API endpoint" (depends on schema, models, etc.)
+
+---
+
+#### "Architectural Issue" (for error handling)
+
+**Definition:** Error indicating design flaw, not implementation bug
+
+**Criteria (any TWO indicates architectural):**
+- Affects >3 files to fix properly
+- Changes API contracts or interfaces
+- Impacts design patterns used
+- Requires significant refactoring
+- Reveals tight coupling problems
+- Same error class appears in multiple places
+- Fix requires changing system boundaries
+
+**Examples:**
+- Architectural: "Circular dependency between modules"
+- Architectural: "Global state causing race conditions across components"
+- NOT architectural: "Typo in function name"
+- NOT architectural: "Missing null check" (implementation detail)
+
+---
+
+### Using These Definitions
+
+When encountering ambiguous situations:
+
+1. **Reference this glossary**
+2. **Apply criteria systematically** (don't guess)
+3. **Document edge cases** (add to glossary if novel)
+4. **Err on side of caution** (if unsure, use more conservative interpretation)
+
+**Example Decision Process:**
+
+```
+Question: "Should I log this to memory?"
+  ↓
+Check: Does it meet "significant" criteria?
+  ↓
+Criteria: "Fixed a bug" → YES → Log it
+  ↓
+If criteria unclear → Err toward logging (better to have than miss)
+```
