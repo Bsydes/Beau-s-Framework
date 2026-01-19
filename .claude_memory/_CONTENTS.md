@@ -2,6 +2,7 @@
 
 ## Sub-Directories (Categories)
 - 📂 checkpoints/
+- 📂 framework/
 - 📂 projects/
 - 📂 system/
 - 📂 testing/
