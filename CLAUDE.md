@@ -246,6 +246,49 @@ USER REQUEST
 - Ambiguous before clear (conservative - assumes unclear unless obvious)
 - Default fallback prevents unhandled cases
 
+### 5.1.1 Tiebreaker Logic (When Multiple Branches Could Match)
+
+**When request could match multiple branches, use priority order:**
+
+Priority: **Complex > Clarification > Ambiguous > Clear**
+
+**Tiebreaker Rules:**
+
+| Situation | Winner | Reasoning |
+|-----------|--------|-----------|
+| Clear scope + High complexity | **Complex** | Complexity determines orchestration needs |
+| Clear intent + Missing details | **Clarification** | Better to ask than assume |
+| Vague description + Inferable intent | **Ambiguous** | Can proceed with stated assumption |
+| Multiple possible matches | **Use priority order** | Systematic, predictable routing |
+| No clear match | **Clarification** | Conservative default |
+
+**Examples:**
+
+```
+"Refactor all auth files with new library"
+  - Matches: Clear (auth files) + Complex (all, refactor, new library)
+  - Winner: Complex (priority rule)
+
+"Update the config"
+  - Matches: Clear (config) + Clarification (which config?)
+  - Winner: Clarification (priority rule)
+
+"The app feels slow"
+  - Matches: Ambiguous (vague) + Clarification (no specifics)
+  - Winner: Ambiguous (can infer "performance issue", proceed with assumption)
+
+"Do something about X"
+  - Matches: None clearly
+  - Winner: Clarification (default fallback)
+```
+
+**Why This Priority Order:**
+
+1. **Complexity first:** Determines resource allocation (Ephor vs local)
+2. **Clarification second:** Prevents wasted effort on wrong assumptions
+3. **Ambiguous third:** When we can infer intent, proceed (efficiency)
+4. **Clear last:** Only when obviously simple and well-defined
+
 ---
 
 ## OFFICIAL PLUGIN INTEGRATION
