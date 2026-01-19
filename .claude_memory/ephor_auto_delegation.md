@@ -13,60 +13,154 @@ Automatically delegate token-intensive tasks to unlimited Opus 4.5 via ephor to 
 
 ### Complexity Triggers (AUTOMATIC DELEGATION REQUIRED)
 
+**Detection Algorithm:**
+```
+1. Normalize input: lowercase, tokenize by word boundaries
+2. Check for negation context (words within 3 tokens)
+3. Match keywords with variants (lemmatization)
+4. If keyword found WITHOUT negation → trigger
+5. If multiple triggers found → activate regardless of order
+```
+
+**Negation Words (Suppress Triggering):**
+- "don't", "dont", "do not"
+- "avoid", "avoiding", "without"
+- "not", "no", "never"
+- "skip", "skipping", "exclude"
+
+**Negation Context Window:** 3 words before and after keyword
+
+**Example Negation Detection:**
+- "don't orchestrate this" → "don't" within 3 words of "orchestrate" → SUPPRESS
+- "avoid multi-step workflow" → "avoid" within 3 words of "multi-step" → SUPPRESS
+- "not complex at all" → "not" within 3 words of "complex" → SUPPRESS
+
+**Order Independence:**
+- Keywords can appear in any order
+- "analyze and implement" = "implement and analyze" (BOTH trigger)
+- Check: Does request contain ANY triggers? (not sequence-dependent)
+
+**Word Boundary Matching:**
+- "coordinate" matches "coordinate" (standalone word)
+- "coordinate" DOES NOT match "uncoordinated" (substring)
+- Use regex word boundaries: `\bkeyword\b`
+
+---
+
 #### 1. RESEARCH Tasks → `ephor "Research..."`
-**Keywords:** "how does", "best practices", "compare", "documentation", "API reference", "library", "framework"
+
+**Primary Keywords (with word boundaries):**
+- "research", "researching"
+- "how does", "how do"
+- "best practices", "best practice"
+- "compare", "comparing", "comparison"
+- "documentation", "docs"
+- "API reference", "reference"
+- "library", "libraries", "framework", "frameworks"
+
+**Natural Variants:**
+- "what's the best way" → treated as "best practices"
+- "look up documentation" → treated as "research"
 
 **Examples:**
-- "How does OAuth2 work?"
-- "Best practices for React state management"
-- "Compare REST vs GraphQL"
-- "Research Stripe API integration"
+- "How does OAuth2 work?" → TRIGGER
+- "Don't research this, just implement" → SUPPRESS
+- "Best practices for React" → TRIGGER
 
-**Why delegate:** Requires external knowledge, documentation synthesis, current best practices
+---
 
 #### 2. ANALYSIS Tasks → `ephor "Analyze..."`
-**Keywords:** "analyze", "explain", "architecture", "design pattern", "trade-offs", "pros and cons"
+
+**Primary Keywords:**
+- "analyze", "analyzing", "analysis"
+- "explain", "explaining", "explanation"
+- "architecture", "architectural"
+- "design pattern", "patterns"
+- "trade-offs", "tradeoffs", "trade offs"
+- "pros and cons", "advantages and disadvantages"
+
+**Natural Variants:**
+- "what are the benefits vs downsides" → treated as "pros and cons"
+- "examine the structure" → treated as "analyze"
 
 **Examples:**
-- "Analyze this codebase structure"
-- "Explain the architecture of microservices"
-- "What are the trade-offs of using Redis?"
-- "Analyze performance bottlenecks"
+- "Analyze this codebase structure" → TRIGGER
+- "Without analysis, just fix it" → SUPPRESS
+- "Explain the architecture" → TRIGGER
 
-**Why delegate:** Requires deep reasoning, multi-factor analysis, architectural thinking
+---
 
 #### 3. PLANNING Tasks → `ephor "Plan..."`
-**Keywords:** "plan", "strategy", "approach", "how to implement", "steps to", "roadmap"
+
+**Primary Keywords:**
+- "plan", "planning"
+- "strategy", "strategic"
+- "approach", "methodology"
+- "how to implement", "how should I implement"
+- "steps to", "step-by-step"
+- "roadmap"
+
+**Natural Variants:**
+- "what's the approach for" → treated as "approach"
+- "outline the steps" → treated as "steps to"
 
 **Examples:**
-- "Plan how to implement authentication"
-- "Strategy for migrating to TypeScript"
-- "Approach for refactoring this module"
-- "Steps to optimize database queries"
+- "Plan how to implement authentication" → TRIGGER
+- "Skip planning, just build it" → SUPPRESS
+- "Strategy for migrating to TypeScript" → TRIGGER
 
-**Why delegate:** Requires strategic thinking, multi-step planning, consideration of alternatives
+---
 
 #### 4. DEEP REASONING Tasks → `ephor "Think..."`
-**Keywords:** "why", "should I", "which is better", "reasoning", "justify", "evaluate"
+
+**Primary Keywords:**
+- "why", "reasoning", "rationale"
+- "should I", "should we"
+- "which is better", "what's better"
+- "justify", "justification"
+- "evaluate", "evaluating", "evaluation"
 
 **Examples:**
-- "Why is this pattern better than that one?"
-- "Should I use PostgreSQL or MongoDB?"
-- "Which testing framework is better?"
-- "Evaluate these architectural options"
+- "Why is this pattern better?" → TRIGGER
+- "Don't evaluate options, pick one" → SUPPRESS
+- "Which testing framework is better?" → TRIGGER
 
-**Why delegate:** Requires logical reasoning, evaluation, justification
+---
 
 #### 5. LEARNING/TUTORIAL Tasks → `ephor "Teach..."`
-**Keywords:** "how to", "tutorial", "guide", "learn", "explain step by step"
+
+**Primary Keywords:**
+- "how to", "how do I", "how can I"
+- "tutorial", "guide", "walkthrough"
+- "learn", "learning", "teach"
+- "explain step by step", "step-by-step"
 
 **Examples:**
-- "How to set up Docker for this project?"
-- "Tutorial on implementing webhooks"
-- "Guide me through setting up CI/CD"
-- "Explain regex step by step"
+- "How to set up Docker?" → TRIGGER
+- "No tutorial needed, show me code" → SUPPRESS
+- "Guide me through setting up CI/CD" → TRIGGER
 
-**Why delegate:** Requires educational synthesis, step-by-step breakdown
+---
+
+#### 6. ORCHESTRATION Tasks → `ephor activate`
+
+**Primary Keywords:**
+- "orchestrate", "orchestrating", "orchestration"
+- "coordinate", "coordinating", "coordination"
+- "multi-step", "multiple steps", "many steps"
+- "break down", "breakdown"
+- "full project", "complete project", "entire project", "whole project"
+- "end-to-end", "end to end"
+
+**Natural Variants:**
+- "do this in several steps" → treated as "multi-step"
+- "across the entire system" → treated as "full project"
+
+**Examples:**
+- "Orchestrate the deployment" → TRIGGER
+- "This is simple orchestration internally" → SUPPRESS (context: describing, not requesting)
+- "Coordinate between services" → TRIGGER
+- "The uncoordinated system" → NO TRIGGER (substring, not word boundary)
 
 ### File/Code Analysis Triggers
 
