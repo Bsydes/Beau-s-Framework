@@ -109,6 +109,43 @@ I say: "Logged."
 
 ---
 
+## Pattern Selection Logic
+
+### Multi-Pattern Chaining Support
+
+**Multi-Pattern Chaining Support:**
+```
+Patterns can be chained when request requires multiple phases.
+
+Pattern Priority Order (for chaining):
+1. EXPLORER (understand structure first)
+2. RESEARCHER (gather external knowledge)
+3. THINKER (make decisions)
+4. HISTORIAN (understand evolution)
+
+Chaining Rules:
+- IF request has "understand/explore" AND "fix/implement" → EXPLORER then RESEARCHER
+- IF request has "research" AND "design/plan" → RESEARCHER then THINKER
+- IF request has "explore" AND "analyze" → EXPLORER then THINKER
+- IF request has "explore" AND "history" → EXPLORER then HISTORIAN
+- IF request has 3+ pattern triggers → Chain in priority order
+
+Single Pattern Selection:
+- IF ONLY exploring_unknown_system → EXPLORER
+- IF ONLY debugging_or_investigating → RESEARCHER
+- IF ONLY design_decision_needed → THINKER
+- IF ONLY understanding_evolution → HISTORIAN
+- IF routine_task → No pattern (direct execution)
+
+Pattern Trigger Keywords:
+- EXPLORER: "explore", "understand structure", "map", "navigate", "where is"
+- RESEARCHER: "research", "investigate", "debug", "why does", "how does"
+- THINKER: "design", "plan", "analyze", "decide", "evaluate", "compare"
+- HISTORIAN: "history", "evolution", "changed", "when was", "git log"
+```
+
+---
+
 ## What Counts as "Significant" for Historian
 
 - Bug fixed
